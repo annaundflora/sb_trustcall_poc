@@ -13,6 +13,15 @@ from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, END, START
 import langgraph.prebuilt as prebuilt
 
+# Importiere die Gruppenfunktionen für kontrollierte Parallelität
+from app.utils.parallel_helpers import (
+    extract_pickup_group,
+    extract_delivery_group,
+    extract_billing_group,
+    extract_shipment_group
+)
+
+# Importiere die einzelnen Extraktoren für die Kombination der Ergebnisse
 from app.nodes.pickup_address_nodes import (
     extract_pickup_basis,
     extract_pickup_location,
@@ -145,7 +154,7 @@ def combine_shipment(state):
 
 def build_shipment_graph():
     """
-    Build the LangGraph workflow with full parallelization using multiple API keys.
+    Build the LangGraph workflow with controlled parallelization to avoid API queueing.
     
     Returns:
         StateGraph: A compiled LangGraph workflow.
@@ -153,27 +162,11 @@ def build_shipment_graph():
     # Initialize the workflow graph
     graph = StateGraph(WorkflowState)
     
-    # Add nodes for pickup address extraction
-    graph.add_node("extract_pickup_basis", extract_pickup_basis)
-    graph.add_node("extract_pickup_location", extract_pickup_location)
-    graph.add_node("extract_pickup_time", extract_pickup_time)
-    graph.add_node("extract_pickup_communication", extract_pickup_communication)
-    
-    # Add nodes for delivery address extraction
-    graph.add_node("extract_delivery_basis", extract_delivery_basis)
-    graph.add_node("extract_delivery_location", extract_delivery_location)
-    graph.add_node("extract_delivery_time", extract_delivery_time)
-    graph.add_node("extract_delivery_communication", extract_delivery_communication)
-    
-    # Add nodes for billing address extraction
-    graph.add_node("extract_billing_basis", extract_billing_basis)
-    graph.add_node("extract_billing_location", extract_billing_location)
-    graph.add_node("extract_billing_communication", extract_billing_communication)
-    
-    # Add nodes for shipment items extraction
-    graph.add_node("extract_shipment_basics", extract_shipment_basics)
-    graph.add_node("extract_shipment_dimensions", extract_shipment_dimensions)
-    graph.add_node("extract_shipment_notes", extract_shipment_notes)
+    # Füge Gruppenknoten mit kontrollierter Parallelität hinzu
+    graph.add_node("extract_pickup_group", extract_pickup_group)
+    graph.add_node("extract_delivery_group", extract_delivery_group)
+    graph.add_node("extract_billing_group", extract_billing_group)
+    graph.add_node("extract_shipment_group", extract_shipment_group)
     
     # Add combination nodes for each group
     graph.add_node("combine_pickup", combine_pickup)
@@ -184,44 +177,20 @@ def build_shipment_graph():
     # Add node for final result combination
     graph.add_node("combine_results", combine_results)
     
-    # Gruppe 1 mit API-Key 1: Pickup und Billing parallel
-    graph.add_edge(START, "extract_pickup_basis")
-    graph.add_edge(START, "extract_pickup_location")
-    graph.add_edge(START, "extract_pickup_time")
-    graph.add_edge(START, "extract_pickup_communication")
+    # Verbinde die Gruppenknoten mit dem Start-Knoten
+    # Gruppe 1 mit API-Key 1: Pickup und Billing
+    graph.add_edge(START, "extract_pickup_group")
+    graph.add_edge(START, "extract_billing_group")
     
-    graph.add_edge(START, "extract_billing_basis")
-    graph.add_edge(START, "extract_billing_location")
-    graph.add_edge(START, "extract_billing_communication")
+    # Gruppe 2 mit API-Key 2: Delivery und Shipment
+    graph.add_edge(START, "extract_delivery_group")
+    graph.add_edge(START, "extract_shipment_group")
     
-    # Gruppe 2 mit API-Key 2: Delivery und Shipment parallel
-    graph.add_edge(START, "extract_delivery_basis")
-    graph.add_edge(START, "extract_delivery_location")
-    graph.add_edge(START, "extract_delivery_time")
-    graph.add_edge(START, "extract_delivery_communication")
-    
-    graph.add_edge(START, "extract_shipment_basics")
-    graph.add_edge(START, "extract_shipment_dimensions")
-    graph.add_edge(START, "extract_shipment_notes")
-    
-    # Fan-in für jede Adressgruppe
-    graph.add_edge("extract_pickup_basis", "combine_pickup")
-    graph.add_edge("extract_pickup_location", "combine_pickup")
-    graph.add_edge("extract_pickup_time", "combine_pickup")
-    graph.add_edge("extract_pickup_communication", "combine_pickup")
-    
-    graph.add_edge("extract_delivery_basis", "combine_delivery")
-    graph.add_edge("extract_delivery_location", "combine_delivery")
-    graph.add_edge("extract_delivery_time", "combine_delivery")
-    graph.add_edge("extract_delivery_communication", "combine_delivery")
-    
-    graph.add_edge("extract_billing_basis", "combine_billing")
-    graph.add_edge("extract_billing_location", "combine_billing")
-    graph.add_edge("extract_billing_communication", "combine_billing")
-    
-    graph.add_edge("extract_shipment_basics", "combine_shipment")
-    graph.add_edge("extract_shipment_dimensions", "combine_shipment")
-    graph.add_edge("extract_shipment_notes", "combine_shipment")
+    # Verbinde die Gruppenknoten mit den Kombinations-Knoten
+    graph.add_edge("extract_pickup_group", "combine_pickup")
+    graph.add_edge("extract_delivery_group", "combine_delivery")
+    graph.add_edge("extract_billing_group", "combine_billing")
+    graph.add_edge("extract_shipment_group", "combine_shipment")
     
     # Finaler Combine
     graph.add_edge("combine_pickup", "combine_results")
