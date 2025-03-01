@@ -74,7 +74,7 @@ Return ONLY the structured data in JSON format. Do not include any reasoning or 
 base_llm = get_anthropic_llm(
     model="claude-3-7-sonnet-20250219",
     temperature=0,
-    key_index=1  # Verwendet ANTHROPIC_API_KEY_1
+    key_index=1  # API-Key 1 für Gruppe 1
 )
 
 # Erstelle LLMs mit spezifischen Systemnachrichten

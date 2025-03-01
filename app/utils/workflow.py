@@ -143,9 +143,14 @@ def combine_shipment(state):
     return {"shipment": shipment}
 
 
+def group1_complete(state):
+    """Stellt sicher, dass Gruppe 1 vollständig abgeschlossen ist, bevor Gruppe 2 startet."""
+    return {}
+
+
 def build_shipment_graph():
     """
-    Build the LangGraph workflow with full parallelization using multiple API keys.
+    Build workflow with two sequential groups, each with internal parallelism.
     
     Returns:
         StateGraph: A compiled LangGraph workflow.
@@ -181,30 +186,26 @@ def build_shipment_graph():
     graph.add_node("combine_billing", combine_billing)
     graph.add_node("combine_shipment", combine_shipment)
     
+    # Add transition node between groups
+    graph.add_node("group1_complete", group1_complete)
+    
     # Add node for final result combination
     graph.add_node("combine_results", combine_results)
     
-    # Gruppe 1 mit API-Key 1: Pickup und Billing parallel
+    # === GRUPPE 1 (PICKUP & DELIVERY) ===
+    # Alle Pickup-Komponenten starten parallel vom START-Knoten
     graph.add_edge(START, "extract_pickup_basis")
     graph.add_edge(START, "extract_pickup_location")
     graph.add_edge(START, "extract_pickup_time")
     graph.add_edge(START, "extract_pickup_communication")
     
-    graph.add_edge(START, "extract_billing_basis")
-    graph.add_edge(START, "extract_billing_location")
-    graph.add_edge(START, "extract_billing_communication")
-    
-    # Gruppe 2 mit API-Key 2: Delivery und Shipment parallel
+    # Alle Delivery-Komponenten starten parallel vom START-Knoten
     graph.add_edge(START, "extract_delivery_basis")
     graph.add_edge(START, "extract_delivery_location")
     graph.add_edge(START, "extract_delivery_time")
     graph.add_edge(START, "extract_delivery_communication")
     
-    graph.add_edge(START, "extract_shipment_basics")
-    graph.add_edge(START, "extract_shipment_dimensions")
-    graph.add_edge(START, "extract_shipment_notes")
-    
-    # Fan-in für jede Adressgruppe
+    # Fan-in für Gruppe 1
     graph.add_edge("extract_pickup_basis", "combine_pickup")
     graph.add_edge("extract_pickup_location", "combine_pickup")
     graph.add_edge("extract_pickup_time", "combine_pickup")
@@ -215,6 +216,21 @@ def build_shipment_graph():
     graph.add_edge("extract_delivery_time", "combine_delivery")
     graph.add_edge("extract_delivery_communication", "combine_delivery")
     
+    # Warten auf beide Combine-Operationen
+    graph.add_edge("combine_pickup", "group1_complete")
+    graph.add_edge("combine_delivery", "group1_complete")
+    
+    # === GRUPPE 2 (BILLING & SHIPMENT) ===
+    # Starte Gruppe 2 erst wenn Gruppe 1 vollständig abgeschlossen ist
+    graph.add_edge("group1_complete", "extract_billing_basis")
+    graph.add_edge("group1_complete", "extract_billing_location")
+    graph.add_edge("group1_complete", "extract_billing_communication")
+    
+    graph.add_edge("group1_complete", "extract_shipment_basics")
+    graph.add_edge("group1_complete", "extract_shipment_dimensions")
+    graph.add_edge("group1_complete", "extract_shipment_notes")
+    
+    # Fan-in für Gruppe 2
     graph.add_edge("extract_billing_basis", "combine_billing")
     graph.add_edge("extract_billing_location", "combine_billing")
     graph.add_edge("extract_billing_communication", "combine_billing")
@@ -223,9 +239,7 @@ def build_shipment_graph():
     graph.add_edge("extract_shipment_dimensions", "combine_shipment")
     graph.add_edge("extract_shipment_notes", "combine_shipment")
     
-    # Finaler Combine
-    graph.add_edge("combine_pickup", "combine_results")
-    graph.add_edge("combine_delivery", "combine_results")
+    # Final combine
     graph.add_edge("combine_billing", "combine_results")
     graph.add_edge("combine_shipment", "combine_results")
     graph.add_edge("combine_results", END)
