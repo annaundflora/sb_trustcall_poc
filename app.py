@@ -8,6 +8,7 @@ import json
 import streamlit as st
 from langsmith import Client
 import traceback
+from langchain_core.callbacks import BaseCallbackHandler
 
 # Import ShipmentBot components
 from app.utils.config import load_environment
@@ -53,25 +54,57 @@ def process_input(input_text):
             with st.expander("Verarbeitungslog", expanded=False):
                 progress = st.empty()
                 
-                # Callback für Fortschrittsanzeige
-                def on_node_end(node_name, output):
-                    # Formatiere den Knotennamen für bessere Lesbarkeit
-                    formatted_name = node_name.replace("extract_", "").replace("_", " ").title()
-                    progress.write(f"✅ Abgeschlossen: {formatted_name}")
+                # Erstelle einen benutzerdefinierten Callback-Handler
+                class StreamlitCallbackHandler(BaseCallbackHandler):
+                    """Callback-Handler für Streamlit-Fortschrittsanzeige."""
+                    
+                    def on_chain_start(self, serialized, inputs, **kwargs):
+                        """Wird aufgerufen, wenn eine Chain startet."""
+                        pass
+                    
+                    def on_chain_end(self, outputs, **kwargs):
+                        """Wird aufgerufen, wenn eine Chain endet."""
+                        pass
+                    
+                    def on_llm_start(self, serialized, prompts, **kwargs):
+                        """Wird aufgerufen, wenn ein LLM startet."""
+                        pass
+                    
+                    def on_llm_end(self, response, **kwargs):
+                        """Wird aufgerufen, wenn ein LLM endet."""
+                        pass
+                    
+                    def on_tool_start(self, serialized, input_str, **kwargs):
+                        """Wird aufgerufen, wenn ein Tool startet."""
+                        pass
+                    
+                    def on_tool_end(self, output, **kwargs):
+                        """Wird aufgerufen, wenn ein Tool endet."""
+                        pass
+                    
+                    def on_node_start(self, node_name, inputs, **kwargs):
+                        """Wird aufgerufen, wenn ein Knoten startet."""
+                        pass
+                    
+                    def on_node_end(self, node_name, outputs, **kwargs):
+                        """Wird aufgerufen, wenn ein Knoten endet."""
+                        # Formatiere den Knotennamen für bessere Lesbarkeit
+                        formatted_name = node_name.replace("extract_", "").replace("_", " ").title()
+                        progress.write(f"✅ Abgeschlossen: {formatted_name}")
+                    
+                    def on_node_error(self, node_name, error, **kwargs):
+                        """Wird aufgerufen, wenn ein Fehler in einem Knoten auftritt."""
+                        progress.write(f"❌ Fehler bei: {node_name} - {str(error)}")
                 
-                # Callback für Fehler
-                def on_node_error(node_name, error):
-                    progress.write(f"❌ Fehler bei: {node_name} - {str(error)}")
+                # Erstelle eine Instanz des Callback-Handlers
+                callback_handler = StreamlitCallbackHandler()
                 
                 config = {
                     "configurable": {
                         "project_name": os.environ.get("LANGSMITH_PROJECT", "sb_trustcall"),
                         "run_name": "ShipmentBot Extraction"
                     },
-                    "callbacks": [
-                        {"on_node_end": on_node_end},
-                        {"on_node_error": on_node_error}
-                    ]
+                    "callbacks": [callback_handler]
                 }
                 
                 # Starte die Extraktion mit Fortschrittsanzeige
