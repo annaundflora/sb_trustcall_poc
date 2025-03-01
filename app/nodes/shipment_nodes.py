@@ -25,7 +25,7 @@ from langchain_core.messages import SystemMessage
 current_dir = os.path.dirname(os.path.abspath(__file__))
 prompt_dir = os.path.join(current_dir, "..", "..", "instructions")
 
-with open(os.path.join(prompt_dir, "shipment-basics-prompt.md"), "r", encoding="utf-8") as f:
+with open(os.path.join(prompt_dir, "shipment-item-basics-prompt.md"), "r", encoding="utf-8") as f:
     shipment_basics_prompt_text = f.read()
     # Füge Optimierungsanweisungen hinzu
     shipment_basics_prompt_text += """
@@ -36,7 +36,7 @@ Extract ONLY the requested fields - no explanations or additional text.
 Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
 """
 
-with open(os.path.join(prompt_dir, "shipment-dimensions-prompt.md"), "r", encoding="utf-8") as f:
+with open(os.path.join(prompt_dir, "shipment-item-dimensions-prompt.md"), "r", encoding="utf-8") as f:
     shipment_dimensions_prompt_text = f.read()
     # Füge Optimierungsanweisungen hinzu
     shipment_dimensions_prompt_text += """
@@ -47,7 +47,7 @@ Extract ONLY the requested fields - no explanations or additional text.
 Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
 """
 
-with open(os.path.join(prompt_dir, "shipment-notes-prompt.md"), "r", encoding="utf-8") as f:
+with open(os.path.join(prompt_dir, "general-shipment-notes-prompt.md"), "r", encoding="utf-8") as f:
     shipment_notes_prompt_text = f.read()
     # Füge Optimierungsanweisungen hinzu
     shipment_notes_prompt_text += """
