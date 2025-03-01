@@ -145,7 +145,7 @@ def combine_shipment(state):
 
 def build_shipment_graph():
     """
-    Build the LangGraph workflow for extracting shipment data with optimized parallelization.
+    Build the LangGraph workflow with full parallelization using multiple API keys.
     
     Returns:
         StateGraph: A compiled LangGraph workflow.
@@ -184,65 +184,49 @@ def build_shipment_graph():
     # Add node for final result combination
     graph.add_node("combine_results", combine_results)
     
-    # Add transition nodes between groups
-    graph.add_node("delivery_group_entry", lambda _: {})
-    graph.add_node("billing_group_entry", lambda _: {})
-    graph.add_node("shipment_group_entry", lambda _: {})
-    
-    # Gruppe 1: Pickup-Komponenten (parallel)
+    # Gruppe 1 mit API-Key 1: Pickup und Billing parallel
     graph.add_edge(START, "extract_pickup_basis")
     graph.add_edge(START, "extract_pickup_location")
     graph.add_edge(START, "extract_pickup_time")
     graph.add_edge(START, "extract_pickup_communication")
     
-    # Fan-in für Pickup-Gruppe
+    graph.add_edge(START, "extract_billing_basis")
+    graph.add_edge(START, "extract_billing_location")
+    graph.add_edge(START, "extract_billing_communication")
+    
+    # Gruppe 2 mit API-Key 2: Delivery und Shipment parallel
+    graph.add_edge(START, "extract_delivery_basis")
+    graph.add_edge(START, "extract_delivery_location")
+    graph.add_edge(START, "extract_delivery_time")
+    graph.add_edge(START, "extract_delivery_communication")
+    
+    graph.add_edge(START, "extract_shipment_basics")
+    graph.add_edge(START, "extract_shipment_dimensions")
+    graph.add_edge(START, "extract_shipment_notes")
+    
+    # Fan-in für jede Adressgruppe
     graph.add_edge("extract_pickup_basis", "combine_pickup")
     graph.add_edge("extract_pickup_location", "combine_pickup")
     graph.add_edge("extract_pickup_time", "combine_pickup")
     graph.add_edge("extract_pickup_communication", "combine_pickup")
     
-    # Übergang zur Delivery-Gruppe
-    graph.add_edge("combine_pickup", "delivery_group_entry")
-    
-    # Gruppe 2: Delivery-Komponenten (parallel)
-    graph.add_edge("delivery_group_entry", "extract_delivery_basis")
-    graph.add_edge("delivery_group_entry", "extract_delivery_location")
-    graph.add_edge("delivery_group_entry", "extract_delivery_time")
-    graph.add_edge("delivery_group_entry", "extract_delivery_communication")
-    
-    # Fan-in für Delivery-Gruppe
     graph.add_edge("extract_delivery_basis", "combine_delivery")
     graph.add_edge("extract_delivery_location", "combine_delivery")
     graph.add_edge("extract_delivery_time", "combine_delivery")
     graph.add_edge("extract_delivery_communication", "combine_delivery")
     
-    # Übergang zur Billing-Gruppe
-    graph.add_edge("combine_delivery", "billing_group_entry")
-    
-    # Gruppe 3: Billing-Komponenten (parallel)
-    graph.add_edge("billing_group_entry", "extract_billing_basis")
-    graph.add_edge("billing_group_entry", "extract_billing_location")
-    graph.add_edge("billing_group_entry", "extract_billing_communication")
-    
-    # Fan-in für Billing-Gruppe
     graph.add_edge("extract_billing_basis", "combine_billing")
     graph.add_edge("extract_billing_location", "combine_billing")
     graph.add_edge("extract_billing_communication", "combine_billing")
     
-    # Übergang zur Shipment-Gruppe
-    graph.add_edge("combine_billing", "shipment_group_entry")
-    
-    # Gruppe 4: Shipment-Komponenten (parallel)
-    graph.add_edge("shipment_group_entry", "extract_shipment_basics")
-    graph.add_edge("shipment_group_entry", "extract_shipment_dimensions")
-    graph.add_edge("shipment_group_entry", "extract_shipment_notes")
-    
-    # Fan-in für Shipment-Gruppe
     graph.add_edge("extract_shipment_basics", "combine_shipment")
     graph.add_edge("extract_shipment_dimensions", "combine_shipment")
     graph.add_edge("extract_shipment_notes", "combine_shipment")
     
-    # Abschluss
+    # Finaler Combine
+    graph.add_edge("combine_pickup", "combine_results")
+    graph.add_edge("combine_delivery", "combine_results")
+    graph.add_edge("combine_billing", "combine_results")
     graph.add_edge("combine_shipment", "combine_results")
     graph.add_edge("combine_results", END)
     

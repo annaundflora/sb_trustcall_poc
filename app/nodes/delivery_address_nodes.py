@@ -18,7 +18,7 @@ from app.schemas.address_schemas import (
     DeliveryAddressTime,
     DeliveryAddressCommunication,
 )
-from langchain_anthropic import ChatAnthropic
+from app.utils.model_setup import get_anthropic_llm
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import SystemMessage
 
@@ -70,13 +70,11 @@ Extract ONLY the requested fields - no explanations or additional text.
 Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
 """
 
-# Basis-LLM-Konfiguration
-base_llm = ChatAnthropic(
+# Basis-LLM-Konfiguration mit API-Key 2
+base_llm = get_anthropic_llm(
     model="claude-3-7-sonnet-20250219",
-    temperature=0,  # Stellt sicher, dass die Antworten deterministisch und knapp sind
-    max_tokens=1000,  # Reduziertes Token-Limit für effizientere Antworten
-    timeout=10,
-    cache=True  # Aktiviere Caching für bessere Performance
+    temperature=0,
+    key_index=2  # Verwendet ANTHROPIC_API_KEY_2
 )
 
 # Erstelle LLMs mit spezifischen Systemnachrichten
