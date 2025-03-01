@@ -5,6 +5,26 @@ A Streamlit application for extracting structured shipping data from unstructure
 """
 import os
 import json
+import sys
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Lade .env-Datei, bevor andere Importe erfolgen
+load_dotenv()
+# Wenn das nicht funktioniert, versuche es mit dem absoluten Pfad
+if not os.environ.get("ANTHROPIC_API_KEY_1"):
+    # Bestimme den Pfad zur .env-Datei relativ zum aktuellen Skript
+    current_dir = Path(__file__).parent.absolute()
+    env_path = current_dir / ".env"
+    if env_path.exists():
+        load_dotenv(dotenv_path=env_path)
+        print(f"Umgebungsvariablen aus {env_path} geladen")
+    else:
+        print(f"WARNUNG: .env-Datei nicht gefunden unter {env_path}")
+        # Liste alle verfügbaren Umgebungsvariablen auf, die mit ANTHROPIC beginnen
+        anthropic_vars = [k for k in os.environ.keys() if k.startswith("ANTHROPIC")]
+        print(f"Verfügbare Anthropic-Variablen: {anthropic_vars}")
+
 import streamlit as st
 from langsmith import Client
 import traceback
