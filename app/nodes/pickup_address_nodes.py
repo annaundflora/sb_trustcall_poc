@@ -28,21 +28,53 @@ prompt_dir = os.path.join(current_dir, "..", "..", "instructions")
 
 with open(os.path.join(prompt_dir, "pickup-address-basis-prompt.md"), "r", encoding="utf-8") as f:
     pickup_basis_prompt_text = f.read()
+    # Füge Optimierungsanweisungen hinzu
+    pickup_basis_prompt_text += """
+# Task
+Extract ONLY the requested fields - no explanations or additional text.
+
+# Output format
+Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
+"""
 
 with open(os.path.join(prompt_dir, "pickup-address-location-prompt.md"), "r", encoding="utf-8") as f:
     pickup_location_prompt_text = f.read()
+    # Füge Optimierungsanweisungen hinzu
+    pickup_location_prompt_text += """
+# Task
+Extract ONLY the requested fields - no explanations or additional text.
+
+# Output format
+Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
+"""
 
 with open(os.path.join(prompt_dir, "pickup-address-time-prompt.md"), "r", encoding="utf-8") as f:
     pickup_time_prompt_text = f.read()
+    # Füge Optimierungsanweisungen hinzu
+    pickup_time_prompt_text += """
+# Task
+Extract ONLY the requested fields - no explanations or additional text.
+
+# Output format
+Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
+"""
 
 with open(os.path.join(prompt_dir, "pickup-address-communication-prompt.md"), "r", encoding="utf-8") as f:
     pickup_communication_prompt_text = f.read()
+    # Füge Optimierungsanweisungen hinzu
+    pickup_communication_prompt_text += """
+# Task
+Extract ONLY the requested fields - no explanations or additional text.
+
+# Output format
+Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
+"""
 
 # Basis-LLM-Konfiguration
 base_llm = ChatAnthropic(
     model="claude-3-7-sonnet-20250219",
-    temperature=0,
-    max_tokens=4096,
+    temperature=0,  # Stellt sicher, dass die Antworten deterministisch und knapp sind
+    max_tokens=1000,  # Reduziertes Token-Limit für effizientere Antworten
     timeout=10,
     cache=True  # Aktiviere Caching für bessere Performance
 )

@@ -19,22 +19,54 @@ prompt_dir = os.path.join(current_dir, "..", "..", "instructions")
 # Read prompt templates from files
 with open(os.path.join(prompt_dir, "billing-address-basis-prompt.md"), "r", encoding="utf-8") as f:
     BILLING_BASIS_PROMPT = f.read()
+    # Add optimization instructions
+    BILLING_BASIS_PROMPT += """
+# Task
+Extract ONLY the requested fields - no explanations or additional text.
+
+# Output format
+Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
+"""
 
 with open(os.path.join(prompt_dir, "billing-address-location-prompt.md"), "r", encoding="utf-8") as f:
     BILLING_LOCATION_PROMPT = f.read()
+    # Add optimization instructions
+    BILLING_LOCATION_PROMPT += """
+# Task
+Extract ONLY the requested fields - no explanations or additional text.
+
+# Output format
+Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
+"""
 
 with open(os.path.join(prompt_dir, "billing-address-communication-prompt.md"), "r", encoding="utf-8") as f:
     BILLING_COMMUNICATION_PROMPT = f.read()
+    # Add optimization instructions
+    BILLING_COMMUNICATION_PROMPT += """
+# Task
+Extract ONLY the requested fields - no explanations or additional text.
+
+# Output format
+Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
+"""
 
 with open(os.path.join(prompt_dir, "billing-address-detection-prompt.md"), "r", encoding="utf-8") as f:
     BILLING_DETECTION_PROMPT = f.read()
+    # Add optimization instructions
+    BILLING_DETECTION_PROMPT += """
+# Task
+Extract ONLY the requested fields - no explanations or additional text.
+
+# Output format
+Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
+"""
 
 
 # Initialize the base LLM
 base_llm = ChatAnthropic(
     model="claude-3-7-sonnet-20250219",
-    temperature=0,
-    max_tokens=4096,
+    temperature=0,  # Ensures deterministic and concise responses
+    max_tokens=1000,  # Reduced token limit for more efficient responses
     timeout=10,
     cache=True  # Enable caching for better performance
 )

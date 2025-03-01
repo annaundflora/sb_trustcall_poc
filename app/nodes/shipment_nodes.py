@@ -19,22 +19,54 @@ prompt_dir = os.path.join(current_dir, "..", "..", "instructions")
 # Read prompt templates from files
 with open(os.path.join(prompt_dir, "shipment-item-basics-prompt.md"), "r", encoding="utf-8") as f:
     SHIPMENT_BASICS_PROMPT = f.read()
+    # Add optimization instructions
+    SHIPMENT_BASICS_PROMPT += """
+# Task
+Extract ONLY the requested fields - no explanations or additional text.
+
+# Output format
+Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
+"""
 
 with open(os.path.join(prompt_dir, "shipment-item-dimensions-prompt.md"), "r", encoding="utf-8") as f:
     SHIPMENT_DIMENSIONS_PROMPT = f.read()
+    # Add optimization instructions
+    SHIPMENT_DIMENSIONS_PROMPT += """
+# Task
+Extract ONLY the requested fields - no explanations or additional text.
+
+# Output format
+Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
+"""
 
 with open(os.path.join(prompt_dir, "general-shipment-notes-prompt.md"), "r", encoding="utf-8") as f:
     SHIPMENT_NOTES_PROMPT = f.read()
+    # Add optimization instructions
+    SHIPMENT_NOTES_PROMPT += """
+# Task
+Extract ONLY the requested fields - no explanations or additional text.
+
+# Output format
+Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
+"""
 
 with open(os.path.join(prompt_dir, "shipment-item-recognition-prompt.md"), "r", encoding="utf-8") as f:
     SHIPMENT_RECOGNITION_PROMPT = f.read()
+    # Add optimization instructions
+    SHIPMENT_RECOGNITION_PROMPT += """
+# Task
+Extract ONLY the requested fields - no explanations or additional text.
+
+# Output format
+Return ONLY the structured data in JSON format. Do not include any reasoning or explanations.
+"""
 
 
 # Initialize the base LLM
 base_llm = ChatAnthropic(
     model="claude-3-7-sonnet-20250219",
-    temperature=0,
-    max_tokens=4096,
+    temperature=0,  # Ensures deterministic and concise responses
+    max_tokens=1000,  # Reduced token limit for more efficient responses
     timeout=10,
     cache=True  # Enable caching for better performance
 )
