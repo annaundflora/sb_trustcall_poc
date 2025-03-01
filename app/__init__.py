@@ -1,0 +1,3 @@
+"""
+ShipmentBot application.
+""" 

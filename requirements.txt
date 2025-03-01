@@ -1,0 +1,13 @@
+langchain
+langchain-core
+langchain-anthropic
+langchain-openai
+langgraph
+streamlit
+pydantic
+python-dotenv
+langsmith
+jsonpatch
+trustcall
+anthropic
+openai
