@@ -13,8 +13,8 @@ except ImportError:
     from app.utils.mock_trustcall import create_extractor
 
 from app.schemas.shipment_schemas import (
-    ShipmentBasics,
-    ShipmentDimensions,
+    ShipmentItemBasics,
+    ShipmentItemDimensions,
     ShipmentNotes,
 )
 from app.utils.model_setup import get_anthropic_llm
@@ -73,14 +73,14 @@ llm_notes = base_llm.with_config({"default_system_message": shipment_notes_promp
 # Erstelle Extraktoren mit den spezifischen LLMs und den entsprechenden Tools
 shipment_basics_extractor = create_extractor(
     llm_basics,
-    tools=[ShipmentBasics],
-    tool_choice="ShipmentBasics"
+    tools=[ShipmentItemBasics],
+    tool_choice="ShipmentItemBasics"
 )
 
 shipment_dimensions_extractor = create_extractor(
     llm_dimensions,
-    tools=[ShipmentDimensions],
-    tool_choice="ShipmentDimensions"
+    tools=[ShipmentItemDimensions],
+    tool_choice="ShipmentItemDimensions"
 )
 
 shipment_notes_extractor = create_extractor(
