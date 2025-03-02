@@ -83,4 +83,4 @@ def build_shipment_graph():
     graph.add_edge("combine_results", END)
     
     # Compile the graph
-    return graph.compile() 
+    return graph.compile()

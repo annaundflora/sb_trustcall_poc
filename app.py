@@ -9,6 +9,12 @@ import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
+# Füge das aktuelle Verzeichnis zum Python-Pfad hinzu
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
+    print(f"Projektverzeichnis zum Python-Pfad hinzugefügt: {current_dir}")
+
 # Lade .env-Datei, bevor andere Importe erfolgen
 load_dotenv()
 # Wenn das nicht funktioniert, versuche es mit dem absoluten Pfad
