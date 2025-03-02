@@ -13,29 +13,29 @@ class ShipmentItem(BaseModel):
     """Information about a single shipment item with all necessary details."""
     
     # FIELD GROUP 1: Basic Information
-    load_carrier: LoadCarrierType = Field(description="Type of load carrier (1=pallet, 2=package, 3=euro pallet cage, 4=document, 5=other)")
+    load_carrier: Optional[LoadCarrierType] = Field(None, description="Type of load carrier (1=pallet, 2=package, 3=euro pallet cage, 4=document, 5=other)")
     name: Optional[str] = Field(None, description="Description of the goods being shipped")
-    quantity: int = Field(description="Number of pieces of this item type")
+    quantity: Optional[int] = Field(None, description="Number of pieces of this item type")
     
     # FIELD GROUP 2: Dimensions
     length: Optional[float] = Field(None, description="Length in cm")
     width: Optional[float] = Field(None, description="Width in cm")
     height: Optional[float] = Field(None, description="Height in cm")
-    weight: float = Field(description="Weight in kg")
+    weight: Optional[float] = Field(None, description="Weight in kg")
     
     # FIELD GROUP 3: Handling
-    stackable: bool = Field(description="Whether the items can be stacked")
+    stackable: Optional[bool] = Field(None, description="Whether the items can be stacked")
     
     # Validators
     @field_validator('weight')
     def validate_weight(cls, v):
-        if v <= 0:
+        if v is not None and v <= 0:
             raise ValueError("Weight must be greater than 0")
         return v
     
     @field_validator('quantity')
     def validate_quantity(cls, v):
-        if v <= 0:
+        if v is not None and v <= 0:
             raise ValueError("Quantity must be greater than 0")
         return v
     
@@ -60,7 +60,7 @@ class ShipmentItem(BaseModel):
             self.width = None
             self.height = None
             # Set default weight to 1kg if not specified or very light
-            if self.weight < 0.1:
+            if self.weight is not None and self.weight < 0.1:
                 self.weight = 1.0
         
         return self
@@ -68,7 +68,7 @@ class ShipmentItem(BaseModel):
     @model_validator(mode='after')
     def set_default_stackable(self):
         # If stackable wasn't explicitly set, determine based on load carrier
-        if self.stackable is None:
+        if self.stackable is None and self.load_carrier is not None:
             if self.load_carrier == LoadCarrierType.PALLET:
                 self.stackable = False  # Pallets are not stackable by default
             elif self.load_carrier == LoadCarrierType.PACKAGE:
@@ -87,7 +87,7 @@ class Shipment(BaseModel):
     """Complete shipment information including items and notes."""
     
     # All items in the shipment
-    items: List[ShipmentItem] = Field(description="List of items in the shipment")
+    items: Optional[List[ShipmentItem]] = Field(default_factory=list, description="List of items in the shipment")
     
     # Additional notes about the shipment
     general_notes: Optional[str] = Field(None, description="General notes about the shipment")

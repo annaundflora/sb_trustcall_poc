@@ -7,16 +7,16 @@ Extract the complete pickup address information from the provided text. The pick
 # Field Groups to Extract
 
 ## 1. Company and Contact Information
-- Company name: The business where goods will be picked up (REQUIRED)
+- Company name: The business where goods will be picked up (OPTIONAL)
 - First name: Contact person's first name at the pickup location (OPTIONAL)
 - Last name: Contact person's last name at the pickup location (OPTIONAL)
 
 ## 2. Location Information
-- Street: Complete street name WITH house/building number (REQUIRED)
+- Street: Complete street name WITH house/building number (OPTIONAL)
 - Address addition: Floor, building name, or other location details (OPTIONAL)
-- Postal code: For German addresses, this is a 5-digit number (REQUIRED)
-- City: City name (REQUIRED)
-- Country: Default to "DE" for Germany if not specified (REQUIRED)
+- Postal code: For German addresses, this is a 5-digit number (OPTIONAL)
+- City: City name (OPTIONAL)
+- Country: Default to "DE" for Germany if not specified (OPTIONAL)
 
 ## 3. Communication Information
 - Phone: Contact number for pickup coordination (OPTIONAL)
@@ -24,7 +24,7 @@ Extract the complete pickup address information from the provided text. The pick
 - Pickup reference: Reference number or code for pickup (OPTIONAL)
 
 ## 4. Time Information
-- Pickup date: Must be in YYYY-MM-DD format (REQUIRED)
+- Pickup date: Must be in YYYY-MM-DD format (OPTIONAL)
 - Pickup time from: Start of pickup time window in HH:MM format (OPTIONAL)
 - Pickup time to: End of pickup time window in HH:MM format (OPTIONAL)
 
@@ -69,7 +69,6 @@ Extract ONLY what is explicitly stated in the text:
 If the input text contains NO information related to a pickup address:
 - DO NOT invent or fabricate address data
 - Return EMPTY values for ALL fields
-- Use the special placeholder value "<MISSING>" for required fields
 - DO NOT use generic defaults like company names derived from shipment contents
 - Prioritize accuracy over completeness - it's better to return empty fields than to guess
 

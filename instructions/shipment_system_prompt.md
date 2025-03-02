@@ -7,23 +7,23 @@ Extract EVERY distinct item in the shipment from the provided text. You must ide
 # Field Groups to Extract
 
 ## 1. Basic Information
-- Load carrier: Using the following mapping (REQUIRED)
+- Load carrier: Using the following mapping (OPTIONAL)
   * 1 = pallet (incl. euro pallet, industrial pallet, slots, pallet slots, etc.)
   * 2 = package (incl. boxes, cases, cartons, parcels, etc.)
   * 3 = euro pallet cage (metal cage pallets, gitterbox, etc.)
   * 4 = document (letters, papers, envelopes, license plates, etc.)
   * 5 = other (anything that doesn't fit the above)
 - Name: Description of the goods being shipped (OPTIONAL)
-- Quantity: Number of pieces of this specific item type (REQUIRED)
+- Quantity: Number of pieces of this specific item type (OPTIONAL)
 
 ## 2. Dimensions and Weight
-- Length: In centimeters (OPTIONAL, but REQUIRED for pallets if not standard size)
-- Width: In centimeters (OPTIONAL, but REQUIRED for pallets if not standard size)
+- Length: In centimeters (OPTIONAL)
+- Width: In centimeters (OPTIONAL)
 - Height: In centimeters (OPTIONAL)
-- Weight: In kilograms (REQUIRED)
+- Weight: In kilograms (OPTIONAL)
 
 ## 3. Handling
-- Stackable: Whether the items can be stacked (REQUIRED)
+- Stackable: Whether the items can be stacked (OPTIONAL)
 
 # Item Identification Guidelines
 
@@ -129,7 +129,6 @@ Extract ONLY what is explicitly stated in the text:
 If the input text contains NO information related to the shipment:
 - DO NOT invent or fabricate address data
 - Return EMPTY values for ALL fields
-- Use the special placeholder value "<MISSING>" for required fields
 - DO NOT use generic defaults like company names derived from shipment contents
 - Prioritize accuracy over completeness - it's better to return empty fields than to guess
 

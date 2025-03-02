@@ -6,17 +6,17 @@ class BillingAddress(BaseModel):
     """Billing address information with all necessary details."""
     
     # FIELD GROUP 1: Company and Contact Information
-    company: str = Field(description="Company name for billing")
+    company: Optional[str] = Field(None, description="Company name for billing")
     salutation: Optional[str] = Field(None, description="Salutation for contact person (Mr., Mrs., etc.)")
     first_name: Optional[str] = Field(None, description="First name of contact person for billing")
     last_name: Optional[str] = Field(None, description="Last name of contact person for billing")
     
     # FIELD GROUP 2: Location Information
-    street: str = Field(description="Street name and house/building number")
+    street: Optional[str] = Field(None, description="Street name and house/building number")
     address_addition: Optional[str] = Field(None, description="Additional address information (building, floor, etc.)")
-    postal_code: str = Field(description="Postal code / ZIP code in the local format")
-    city: str = Field(description="City name")
-    country: str = Field(description="Country code (ISO 2-letter code preferred)", default="DE")
+    postal_code: Optional[str] = Field(None, description="Postal code / ZIP code in the local format")
+    city: Optional[str] = Field(None, description="City name")
+    country: Optional[str] = Field(None, description="Country code (ISO 2-letter code preferred)", default="DE")
     
     # FIELD GROUP 3: Communication and Financial Information
     phone: Optional[str] = Field(None, description="Phone number for billing contact")

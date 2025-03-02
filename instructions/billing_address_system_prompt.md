@@ -7,17 +7,17 @@ Extract the complete billing address information from the provided text. The bil
 # Field Groups to Extract
 
 ## 1. Company and Contact Information
-- Company name: The business for invoice/billing purposes (REQUIRED)
+- Company name: The business for invoice/billing purposes (OPTIONAL)
 - Salutation: Form of address (Mr., Mrs., Herr, Frau, etc.) (OPTIONAL)
 - First name: Contact person's first name for billing (OPTIONAL)
 - Last name: Contact person's last name for billing (OPTIONAL)
 
 ## 2. Location Information
-- Street: Complete street name WITH house/building number (REQUIRED)
+- Street: Complete street name WITH house/building number (OPTIONAL)
 - Address addition: Floor, building name, or other location details (OPTIONAL)
-- Postal code: For German addresses, this is a 5-digit number (REQUIRED)
-- City: City name (REQUIRED)
-- Country: Default to "DE" for Germany if not specified (REQUIRED)
+- Postal code: For German addresses, this is a 5-digit number (OPTIONAL)
+- City: City name (OPTIONAL)
+- Country: Default to "DE" for Germany if not specified (OPTIONAL)
 
 ## 3. Communication and Financial Information
 - Phone: Contact number for billing inquiries (OPTIONAL)
@@ -53,7 +53,6 @@ Extract ONLY what is explicitly stated in the text:
 If the input text contains NO information related to a billing address:
 - DO NOT invent or fabricate address data
 - Return EMPTY values for ALL fields
-- Use the special placeholder value "<MISSING>" for required fields
 - DO NOT use generic defaults like company names derived from shipment contents
 - Prioritize accuracy over completeness - it's better to return empty fields than to guess
 
