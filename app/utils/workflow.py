@@ -13,16 +13,11 @@ from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, END, START
 import langgraph.prebuilt as prebuilt
 
-from app.nodes.pickup_address_node import extract_pickup_address
-from app.nodes.delivery_address_node import extract_delivery_address
-from app.nodes.billing_address_node import extract_billing_address
-from app.nodes.shipment_node import extract_shipment
+# Import the combined node instead of individual nodes
+from app.nodes.shipment_booking_node import extract_shipment_booking
 
-from app.schemas.pickup_address_schema import PickupAddress
-from app.schemas.delivery_address_schema import DeliveryAddress
-from app.schemas.billing_address_schema import BillingAddress
-from app.schemas.shipment_schema import Shipment, ShipmentItem
-
+# Import the combined schema
+from app.schemas.shipment_booking_schema import ShipmentBooking
 
 # Helper function to merge dictionaries
 def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
@@ -64,7 +59,7 @@ def combine_results(state):
 
 def build_shipment_graph():
     """
-    Build workflow with four parallel nodes for entity extraction.
+    Build workflow with a single unified node for entity extraction.
     
     Returns:
         StateGraph: A compiled LangGraph workflow.
@@ -72,26 +67,17 @@ def build_shipment_graph():
     # Initialize the workflow graph
     graph = StateGraph(WorkflowState)
     
-    # Add nodes for entity extraction
-    graph.add_node("extract_pickup_address", extract_pickup_address)
-    graph.add_node("extract_delivery_address", extract_delivery_address)
-    graph.add_node("extract_billing_address", extract_billing_address)
-    graph.add_node("extract_shipment", extract_shipment)
+    # Add the combined extraction node
+    graph.add_node("extract_shipment_booking", extract_shipment_booking)
     
     # Add node for final result combination
     graph.add_node("combine_results", combine_results)
     
-    # All extraction nodes start in parallel from the START node
-    graph.add_edge(START, "extract_pickup_address")
-    graph.add_edge(START, "extract_delivery_address")
-    graph.add_edge(START, "extract_billing_address")
-    graph.add_edge(START, "extract_shipment")
+    # Connect the extraction node to the start
+    graph.add_edge(START, "extract_shipment_booking")
     
-    # All extraction nodes feed into the combine_results node
-    graph.add_edge("extract_pickup_address", "combine_results")
-    graph.add_edge("extract_delivery_address", "combine_results")
-    graph.add_edge("extract_billing_address", "combine_results")
-    graph.add_edge("extract_shipment", "combine_results")
+    # Connect the extraction node to the combine_results node
+    graph.add_edge("extract_shipment_booking", "combine_results")
     
     # Final node connects to END
     graph.add_edge("combine_results", END)
