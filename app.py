@@ -138,11 +138,39 @@ def process_input(input_text):
                 final_state = shipment_graph.invoke(state, config=config)
                 progress.write("✨ Extraktion abgeschlossen!")
                 
-                return final_state.get("result", {})
+                # Process the result to handle NULL and <UNKNOWN> values
+                result = final_state.get("result", {})
+                result = standardize_values(result)
+                return result
     except Exception as e:
         st.error(f"Error processing input: {str(e)}")
         st.error(traceback.format_exc())
         return {}
+
+
+def standardize_values(data):
+    """
+    Standardize values in the extracted data, handling NULL and <UNKNOWN> values.
+    
+    Args:
+        data (dict): The extracted data
+        
+    Returns:
+        dict: The standardized data
+    """
+    if isinstance(data, dict):
+        for key, value in data.items():
+            # Handle NULL and <UNKNOWN> values
+            if value == "NULL" or value == "<UNKNOWN>":
+                data[key] = "N/A"
+            # Recursively process nested dictionaries and lists
+            elif isinstance(value, (dict, list)):
+                data[key] = standardize_values(value)
+    elif isinstance(data, list):
+        for i, item in enumerate(data):
+            data[i] = standardize_values(item)
+    
+    return data
 
 
 # Streamlit UI
@@ -202,6 +230,11 @@ if st.button("Extract Shipping Data", type="primary"):
                         st.write(f"**Date:** {pickup.get('pickup_date', 'N/A')}")
                         if pickup.get('pickup_time_from') or pickup.get('pickup_time_to'):
                             st.write(f"**Time Window:** {pickup.get('pickup_time_from', '')} - {pickup.get('pickup_time_to', '')}")
+                    
+                    # Add pickup notes section
+                    if pickup.get('pickup_notes'):
+                        st.markdown("### Notes")
+                        st.write(f"**Pickup Notes:** {pickup.get('pickup_notes', '')}")
                 else:
                     st.warning("No pickup address information extracted")
             
@@ -228,6 +261,11 @@ if st.button("Extract Shipping Data", type="primary"):
                         st.write(f"**Date:** {delivery.get('delivery_date', 'N/A')}")
                         if delivery.get('delivery_time_from') or delivery.get('delivery_time_to'):
                             st.write(f"**Time Window:** {delivery.get('delivery_time_from', '')} - {delivery.get('delivery_time_to', '')}")
+                    
+                    # Add delivery notes section
+                    if delivery.get('delivery_notes'):
+                        st.markdown("### Notes")
+                        st.write(f"**Delivery Notes:** {delivery.get('delivery_notes', '')}")
                 else:
                     st.warning("No delivery address information extracted")
             
@@ -295,13 +333,9 @@ if st.button("Extract Shipping Data", type="primary"):
                                 st.write(f"**Dimensions:** {' × '.join(dimensions)}")
                 
                     # Notes section
-                    st.markdown("### Notes")
-                    if shipment.get("general_notes"):
-                        st.markdown(f"**General Notes:**\n{shipment.get('general_notes')}")
-                    if shipment.get("pickup_notes"):
-                        st.markdown(f"**Pickup Notes:**\n{shipment.get('pickup_notes')}")
-                    if shipment.get("delivery_notes"):
-                        st.markdown(f"**Delivery Notes:**\n{shipment.get('delivery_notes')}")
+                    if shipment.get("shipment_notes"):
+                        st.markdown("### Notes")
+                        st.write(f"**Shipment Notes:** {shipment.get('shipment_notes')}")
                 else:
                     st.warning("No shipment items extracted")
             
