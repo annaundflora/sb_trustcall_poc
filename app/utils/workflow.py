@@ -14,7 +14,7 @@ from langgraph.graph import StateGraph, END, START
 import langgraph.prebuilt as prebuilt
 
 # Import the combined node instead of individual nodes
-from app.nodes.new_shipment_node import extract_shipment_booking
+from app.nodes.fixed_node import extract_shipment_booking
 
 # Import the combined schema
 from app.schemas.shipment_booking_schema import ShipmentBooking
