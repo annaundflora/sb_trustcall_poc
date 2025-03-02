@@ -45,10 +45,17 @@ IMPORTANT: Do not confuse the billing address with pickup or delivery addresses.
 # Extraction Precision
 
 Extract ONLY what is explicitly stated in the text:
-- Do not guess or fabricate missing information
-- If information for a required field is not provided, leave it empty
 - Extract the information exactly as it appears, correcting only the format where needed
 - Pay close attention to context to distinguish billing address from pickup/delivery addresses
+
+# Handling Missing Data
+
+If the input text contains NO information related to a billing address:
+- DO NOT invent or fabricate address data
+- Return EMPTY values for ALL fields
+- Use the special placeholder value "<MISSING>" for required fields
+- DO NOT use generic defaults like company names derived from shipment contents
+- Prioritize accuracy over completeness - it's better to return empty fields than to guess
 
 # Common Scenarios
 

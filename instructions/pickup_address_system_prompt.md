@@ -61,10 +61,17 @@ The pickup address may be identified by:
 # Extraction Precision
 
 Extract ONLY what is explicitly stated in the text:
-- Do not guess or fabricate missing information
-- If information for a required field is not provided, leave it empty
 - Extract the information exactly as it appears, correcting only the format where needed
 - Pay close attention to context to avoid mixing pickup and delivery information
+
+# Handling Missing Data
+
+If the input text contains NO information related to a pickup address:
+- DO NOT invent or fabricate address data
+- Return EMPTY values for ALL fields
+- Use the special placeholder value "<MISSING>" for required fields
+- DO NOT use generic defaults like company names derived from shipment contents
+- Prioritize accuracy over completeness - it's better to return empty fields than to guess
 
 # Extraction Goal
 Focus on extracting accurate information, even if incomplete. It's better to omit information than to guess incorrectly.

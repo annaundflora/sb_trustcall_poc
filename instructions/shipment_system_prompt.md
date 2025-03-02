@@ -121,10 +121,17 @@ If not explicitly specified, use these defaults:
 # Extraction Precision
 
 Extract ONLY what is explicitly stated in the text:
-- Do not guess or fabricate missing information
-- If information for a required field is not provided, use the default rules above
 - Extract multiple distinct items separately
 - Be precise with numeric values
+
+# Handling Missing Data
+
+If the input text contains NO information related to the shipment:
+- DO NOT invent or fabricate address data
+- Return EMPTY values for ALL fields
+- Use the special placeholder value "<MISSING>" for required fields
+- DO NOT use generic defaults like company names derived from shipment contents
+- Prioritize accuracy over completeness - it's better to return empty fields than to guess
 
 # Extraction Goal
 Focus on extracting accurate information for each distinct item, even if incomplete. It's better to follow the default rules than to guess incorrectly.
