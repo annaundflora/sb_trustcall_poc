@@ -260,9 +260,19 @@ if st.button("Extract Shipping Data", type="primary"):
                 if items:
                     st.markdown("### Items")
                     for i, item in enumerate(items):
-                        with st.expander(f"Item {i+1}: {item.get('category', 'Unknown')} - {item.get('description', 'No description')}"):
-                            st.write(f"**Category:** {item.get('category', 'N/A')}")
-                            st.write(f"**Description:** {item.get('description', 'N/A')}")
+                        # Map load_carrier to readable category
+                        carrier_types = {
+                            1: "Pallet",
+                            2: "Package",
+                            3: "Euro Pallet Cage",
+                            4: "Document",
+                            5: "Other"
+                        }
+                        carrier_type = carrier_types.get(item.get('load_carrier', 5), "Unknown")
+                        
+                        with st.expander(f"Item {i+1}: {carrier_type} - {item.get('name', 'No description')}"):
+                            st.write(f"**Category:** {carrier_type}")
+                            st.write(f"**Description:** {item.get('name', 'N/A')}")
                             st.write(f"**Quantity:** {item.get('quantity', 'N/A')}")
                             st.write(f"**Stackable:** {'Yes' if item.get('stackable') else 'No'}")
                             st.write(f"**Weight:** {item.get('weight', 'N/A')} kg")
