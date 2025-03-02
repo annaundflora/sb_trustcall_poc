@@ -30,29 +30,3 @@ class DeliveryAddress(BaseModel):
     
     # FIELD GROUP 5: Additional Notes
     delivery_notes: Optional[str] = Field(None, description="Special instructions for delivery location, access, or unloading")
-    
-    # Validators
-    @field_validator('delivery_date')
-    def validate_delivery_date(cls, v):
-        if v:
-            try:
-                # Checking format DD.MM.YYYY
-                datetime.strptime(v, '%d.%m.%Y')
-            except ValueError:
-                try:
-                    # Try to accept other formats and convert them
-                    from dateutil import parser
-                    parsed_date = parser.parse(v)
-                    return parsed_date.strftime('%d.%m.%Y')
-                except:
-                    raise ValueError("Delivery date should be in DD.MM.YYYY format")
-        return v
-    
-    @field_validator('delivery_time_from', 'delivery_time_to')
-    def validate_delivery_time(cls, v):
-        if v:
-            try:
-                datetime.strptime(v, '%H:%M')
-            except ValueError:
-                raise ValueError("Delivery time must be in HH:MM format")
-        return v

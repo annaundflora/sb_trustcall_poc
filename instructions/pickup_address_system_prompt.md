@@ -28,12 +28,24 @@ Extract the complete pickup address information from the provided text. The pick
 - Pickup time from: Start of pickup time window in HH:MM format (OPTIONAL)
 - Pickup time to: End of pickup time window in HH:MM format (OPTIONAL)
 
-## 5. Additional Notes
+## 5. Pickup Notes
 - Pickup notes: Include ONLY instructions specific to the pickup location, such as:
   * Access instructions ("Enter through the rear gate")
   * Loading conditions ("Loading ramp available")
   * Site-specific requirements ("Report to security desk")
   * Contact procedures ("Call 30 minutes before arrival")
+  * GPS Coordinates
+  * Trade fair or event-specific access information
+
+- DO NOT include shipment notes, related ot shipment items or handling, such as: 
+  * Description of the shipment and shipment items
+  * Packaging requirements
+  * Handling instructions for the goods
+  * Special care needed for fragile items
+  * Temperature requirements
+  * Hazardous materials information
+  * Item-specific loading instructions
+  * Product-specific details
 
 # Identification Guidelines
 
@@ -42,29 +54,6 @@ The pickup address may be identified by:
 - Context clues that indicate this is where goods will be collected from
 - Position in the text (if two addresses are mentioned, the first is typically the pickup)
 - If only one address is provided without clear indication, assume it's the pickup address
-
-# Format Requirements
-
-- Convert all dates to YYYY-MM-DD format (e.g., "3rd March" → "2025-03-03")
-- Convert all times to 24-hour HH:MM format (e.g., "3 pm" → "15:00")
-- Format postal codes according to the country standard:
-  * Germany (DE): 5 digits (e.g., "12345")
-  * United Kingdom (GB): Alphanumeric format (e.g., "SW1A 1AA")
-  * France (FR): 5 digits (e.g., "75001")
-  * Netherlands (NL): 4 digits followed by 2 letters (e.g., "1234 AB")
-  * Belgium (BE): 4 digits (e.g., "1000")
-  * Spain (ES): 5 digits (e.g., "28001")
-  * Italy (IT): 5 digits (e.g., "00100")
-  * For other countries, maintain the format as provided
-- For country codes, use the ISO 2-letter standard (e.g., "DE", "GB", "FR")
-
-# DO NOT Include in Pickup Notes
-
-- Notes about the shipment items themselves
-- Packaging requirements
-- Handling instructions for goods
-- Item-specific information
-- Delivery location notes
 
 # Extraction Precision
 
@@ -79,6 +68,7 @@ If the input text contains NO information related to a pickup address:
 - Return EMPTY values for ALL fields
 - DO NOT use generic defaults like company names derived from shipment contents
 - Prioritize accuracy over completeness - it's better to return empty fields than to guess
+- Return "null" for missing values
 
 # Extraction Goal
 Focus on extracting accurate information, even if incomplete. It's better to omit information than to guess incorrectly.

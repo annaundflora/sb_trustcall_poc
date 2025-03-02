@@ -48,5 +48,4 @@ def get_anthropic_llm(model="claude-3-7-sonnet-20250219", temperature=0, key_ind
         temperature=temperature,
         max_tokens=1000,
         timeout=10,
-        cache=True  # Aktiviere Caching für bessere Performance
     ) 

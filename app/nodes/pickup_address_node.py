@@ -33,7 +33,6 @@ Return ONLY the structured data in JSON format. Do not include any reasoning or 
 # Base LLM configuration with API key 1
 base_llm = get_anthropic_llm(
     model="claude-3-7-sonnet-20250219",
-    temperature=0,
     key_index=1  # API key 1 for group 1
 )
 
@@ -51,6 +50,6 @@ def extract_pickup_address(state):
     """Extract complete pickup address information."""
     result = pickup_address_extractor.invoke(
         state["input"],
-        config={"configurable": {"max_attempts": 2}}  # Limit retries to 2
+        config={"configurable": {"max_attempts": 1}}  # Limit retries to 2
     )
     return {"pickup_address": result["responses"][0].model_dump()} 

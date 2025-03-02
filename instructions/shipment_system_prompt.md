@@ -36,11 +36,6 @@ Extract each item separately if they:
 - Have different handling requirements
 - Appear as separate rows in a table or list
 
-When processing tabular data:
-- Extract each row as a separate item
-- Process all columns to identify the relevant information for each item
-- Don't skip rows even if they appear similar - extract each one individually
-
 DO NOT extract as separate items if they are:
 - Summary information (e.g., "Total: 500kg")
 - Transport container information (e.g., "20-foot container", "FTL")
@@ -51,7 +46,7 @@ DO NOT extract as separate items if they are:
 1. Focus on the physical carrier, not the contents:
    - "3 pallets of boxes" → load carrier is PALLET (1)
    - "5 boxes of documents" → load carrier is PACKAGE (2)
-
++
 2. Standard terminology mapping:
    - Pallets, Euro-pallets, Industrial pallets, slots → 1
    - Boxes, cartons, cases, packages → 2
@@ -75,17 +70,19 @@ DO NOT extract as separate items if they are:
 
 # Dimension Determination Rules
 
+1. Always centimeters (convert if neccessary)
+2. Only use integer values, and round them if neccessary.
+
 ## For load carrier = "1" (pallet):
 1. If dimensions are specified, use them.
 2. If partially specified (e.g., "120x80"), use those and leave others empty.
 3. For standard types, use default dimensions:
    - Euro pallet: 120x80 cm
-   - Industrial pallet: 100x120 cm
 
 ## For other load carriers:
 1. Use specified dimensions when available.
 2. For documents (type 4), use 30x21 cm (A4) if no dimensions given.
-3. Always convert to centimeters.
+
 
 # Weight Determination Rules
 
@@ -94,10 +91,12 @@ DO NOT extract as separate items if they are:
 3. For documents without specified weight, use 1 kg.
 4. If weight rounds to 0, use 1 kg.
 5. If gross and chargeable weights differ, use gross weight.
+6. Only use integer values, and round them if neccessary.
 
 ## For multiple different items:
 1. If weight is specified per item, use those values.
-2. If only total weight is given, divide proportionally among items.
+1a. If the items quantity is > 1, devide the item weight by the quantity
+3. If only total weight is given, divide proportionally among items.
 
 # Stackability Determination Rules
 
@@ -108,15 +107,24 @@ If not explicitly specified, use these defaults:
 4. Documents (type 4): stackable
 5. Other (type 5): NOT stackable
 
-# Unit Conversion Guidelines
+# Shipment Notes Rules: 
+- ONLY include shipment notes, related ot shipment items or handling, such as: 
+  * Packaging requirements
+  * Handling instructions for the goods
+  * Special care needed for fragile items
+  * Temperature requirements
+  * Hazardous materials information
+  * Item-specific loading instructions
+  * Product-specific details
 
-- Meters → centimeters (multiply by 100)
-- Millimeters → centimeters (divide by 10)
-- Feet → centimeters (multiply by 30.48)
-- Inches → centimeters (multiply by 2.54)
-- Pounds → kilograms (multiply by 0.453592)
-- Tons → kilograms (multiply by 1000)
-- Ounces → kilograms (multiply by 0.0283495)
+- Do not include address related notes, such as: 
+  * Shipment data, which represents specific fields. Don't dublicate values.
+  * Access instructions ("Enter through the rear gate")
+  * Loading conditions ("Loading ramp available")
+  * Site-specific requirements ("Report to security desk")
+  * Contact procedures ("Call 30 minutes before arrival")
+  * GPS Coordinates
+  * Trade fair or event-specific access information
 
 # Extraction Precision
 
@@ -131,6 +139,7 @@ If the input text contains NO information related to the shipment:
 - Return EMPTY values for ALL fields
 - DO NOT use generic defaults like company names derived from shipment contents
 - Prioritize accuracy over completeness - it's better to return empty fields than to guess
+- Return "null" for missing values
 
 # Extraction Goal
 Focus on extracting accurate information for each distinct item, even if incomplete. It's better to follow the default rules than to guess incorrectly.
