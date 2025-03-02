@@ -14,9 +14,9 @@ Extract the complete pickup address information from the provided text. The pick
 ## 2. Location Information
 - Street: Complete street name WITH house/building number (OPTIONAL)
 - Address addition: Floor, building name, or other location details (OPTIONAL)
-- Postal code: For German addresses, this is a 5-digit number (OPTIONAL)
+- Postal code: Format according to the country's standard (e.g., 5 digits for Germany, alphanumeric for UK) (OPTIONAL)
 - City: City name (OPTIONAL)
-- Country: Default to "DE" for Germany if not specified (OPTIONAL)
+- Country: ISO 2-letter country code (e.g., "DE" for Germany, "FR" for France) (OPTIONAL)
 
 ## 3. Communication Information
 - Phone: Contact number for pickup coordination (OPTIONAL)
@@ -47,8 +47,16 @@ The pickup address may be identified by:
 
 - Convert all dates to YYYY-MM-DD format (e.g., "3rd March" → "2025-03-03")
 - Convert all times to 24-hour HH:MM format (e.g., "3 pm" → "15:00")
-- For German postal codes, ensure they are 5 digits
-- Default country to "DE" for Germany if not specified
+- Format postal codes according to the country standard:
+  * Germany (DE): 5 digits (e.g., "12345")
+  * United Kingdom (GB): Alphanumeric format (e.g., "SW1A 1AA")
+  * France (FR): 5 digits (e.g., "75001")
+  * Netherlands (NL): 4 digits followed by 2 letters (e.g., "1234 AB")
+  * Belgium (BE): 4 digits (e.g., "1000")
+  * Spain (ES): 5 digits (e.g., "28001")
+  * Italy (IT): 5 digits (e.g., "00100")
+  * For other countries, maintain the format as provided
+- For country codes, use the ISO 2-letter standard (e.g., "DE", "GB", "FR")
 
 # DO NOT Include in Pickup Notes
 
