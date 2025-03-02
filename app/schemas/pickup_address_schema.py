@@ -16,7 +16,7 @@ class PickupAddress(BaseModel):
     address_addition: Optional[str] = Field(None, description="Additional address information (building, floor, etc.)")
     postal_code: Optional[str] = Field(None, description="Postal code / ZIP code in the local format")
     city: Optional[str] = Field(None, description="City name")
-    country: Optional[str] = Field(None, description="Country code (ISO 2-letter code preferred)", default="DE")
+    country: Optional[str] = Field(description="Country code (ISO 2-letter code preferred)", default="DE")
     
     # FIELD GROUP 3: Communication Information
     phone: Optional[str] = Field(None, description="Phone number for pickup contact")
