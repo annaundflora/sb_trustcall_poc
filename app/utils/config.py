@@ -19,7 +19,8 @@ def load_environment():
     
     # Verify that required API keys are present
     required_vars = [
-        "ANTHROPIC_API_KEY",
+        "ANTHROPIC_API_KEY_1",  # API key 1 for pickup and delivery nodes
+        "ANTHROPIC_API_KEY_2",  # API key 2 for billing and shipment nodes
         "LANGSMITH_API_KEY",
         "LANGSMITH_ENDPOINT",
         "LANGSMITH_PROJECT"

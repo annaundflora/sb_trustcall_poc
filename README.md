@@ -64,7 +64,6 @@ This will start the web interface where you can enter unstructured text and extr
 - **LangChain/LangGraph**: Orchestration of LLM calls and workflow management
 - **TrustCall**: JSON schema validation and patch-based error correction
 - **LangSmith**: Tracing and debugging of LLM requests
-- **Claude 3.7 Sonnet**: Primary model for precise data extraction (claude-3-7-sonnet-20250219)
 
 ## Proof of Concept
 
